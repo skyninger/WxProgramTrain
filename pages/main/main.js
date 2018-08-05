@@ -31,7 +31,7 @@ Page({
           depart_date: strDate
         }
       }).then(response => {
-        /* console.log(response) */
+        console.log(response)
         const objData = response.data
         objTrainList[strDate][strNo] = objData.data
         this.setData({
@@ -79,7 +79,7 @@ Page({
           depart_date: util.formatTime(new Date(), '-', 'date')
         }
       }).then(response => {
-        /* console.log(response) */
+        console.log(response)
         wx.hideLoading()
         const objData = response.data
         /* wx.showModal({

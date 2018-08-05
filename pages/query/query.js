@@ -15,67 +15,77 @@ Page({
     })
   },
   query: function () {
+    let cityStartCode = this.$_convertCity(this.data.citystart, true)
+    let cityArriveCode = this.$_convertCity(this.data.cityend, true)
     let objPost = {
       'leftTicketDTO.train_date': this.data.date,
-      'leftTicketDTO.from_station': this.$_convertCity(this.data.citystart, true),
-      'leftTicketDTO.to_station': this.$_convertCity(this.data.cityend, true),
+      'leftTicketDTO.from_station': cityStartCode,
+      'leftTicketDTO.to_station': cityArriveCode,
       'purpose_codes': 'ADULT'
     }
     console.log(objPost)
-    wx.showNavigationBarLoading()
-    util.$http.get('https://kyfw.12306.cn/otn/leftTicket/query', {
-      data: objPost
-    }).then(response => {
-      console.log(response)
-      wx.hideNavigationBarLoading()
-      const objData = response.data
-      const arrData = objData.data.result
-      let arrTmp = []
-      for (let i = 0; i < arrData.length; i++) {
-        let arrTmpSplit = arrData[i].split('|')
-        arrTmp.push({
-          no: arrTmpSplit[3],
-          start_end: this.$_convertCity(arrTmpSplit[4], false) + '-' + this.$_convertCity(arrTmpSplit[5], false),
-          start_time: arrTmpSplit[8],
-          arrive_time: arrTmpSplit[9],
-          code: arrTmpSplit[2]
+    if (this.data.date && cityStartCode && cityArriveCode) {   
+      wx.showNavigationBarLoading()
+      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/query', {
+        data: objPost
+      }).then(response => {
+        console.log(response)
+        wx.hideNavigationBarLoading()
+        const objData = response.data
+        const arrData = objData.data.result
+        let arrTmp = []
+        for (let i = 0; i < arrData.length; i++) {
+          let arrTmpSplit = arrData[i].split('|')
+          arrTmp.push({
+            no: arrTmpSplit[3],
+            start_end: this.$_convertCity(arrTmpSplit[4], false) + '-' + this.$_convertCity(arrTmpSplit[5], false),
+            start_time: arrTmpSplit[8],
+            arrive_time: arrTmpSplit[9],
+            code: arrTmpSplit[2]
+          })
+        }
+        this.setData({
+          arrData: arrTmp
         })
-      }
-      this.setData({
-        arrData: arrTmp
-      })
-      if (!arrTmp.length) {
+        if (!arrTmp.length) {
+          wx.showModal({
+            content: `暂无数据`,
+            showCancel: false
+          })
+        }
+        wx.setStorage({
+          key: 'citystart',
+          data: this.data.citystart
+        })
+        wx.setStorage({
+          key: 'cityend',
+          data: this.data.cityend
+        })
+        wx.setStorage({
+          key: 'date',
+          data: this.data.date
+        })
+        wx.setStorage({
+          key: 'strQueryData',
+          data: JSON.stringify(this.data.arrData)
+        })
+      }).catch(err => {
+        wx.hideNavigationBarLoading()
+        this.setData({
+          arrData: []
+        })
         wx.showModal({
-          content: `暂无数据`,
+          content: JSON.stringify(err),
           showCancel: false
         })
-      }
-      wx.setStorage({
-        key: 'citystart',
-        data: this.data.citystart
       })
-      wx.setStorage({
-        key: 'cityend',
-        data: this.data.cityend
-      })
-      wx.setStorage({
-        key: 'date',
-        data: this.data.date
-      })
-      wx.setStorage({
-        key: 'strQueryData',
-        data: JSON.stringify(this.data.arrData)
-      })
-    }).catch(err => {
-      wx.hideNavigationBarLoading()
-      this.setData({
-        arrData: []
-      })
+    } else {
       wx.showModal({
-        content: JSON.stringify(err),
+        title: '输入必填项',
+        content: JSON.stringify(objPost),
         showCancel: false
       })
-    })
+    }
   },
   $_convertCity: function (city, bool) {
     let name = station.stationNames.split("@")
