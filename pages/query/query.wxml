@@ -1,0 +1,43 @@
+<view>
+  <view class="input-box">
+    <input class="input" type="text" value="{{citystart}}" bindinput="handlerInput" data-name="citystart" placeholder="请输入出发城市"></input>
+    <view class="sign">-</view>
+    <input class="input" type="text" value="{{cityend}}" bindinput="handlerInput" data-name="cityend" placeholder="请输入到达城市"></input>
+  </view>
+  <view class="input-box">
+    <input class="input" type="text" value="{{date}}" bindinput="handlerInput" data-name="date" placeholder="请选择日期"></input>
+    <view class="btn-query" bindtap="query">查询</view>
+  </view>
+  <view class="grid-wrap" wx:if="{{arrData.length}}">
+    <view class="table">
+      <view class="grid">
+        <view class="title">
+          <text>车次</text>
+        </view>
+        <view class="title">
+          <text>首末站</text>
+        </view>
+        <view class="title">
+          <text>出发</text>
+        </view>
+        <view class="title">
+          <text>到达</text>
+        </view>
+      </view>
+      <view class="grid" wx:for="{{arrData}}" wx:key="{{key}}" wx:for-item="obj" bindtap="handlerSelect" data-no="{{obj.no}}" data-code="{{obj.code}}">
+        <view class="value">
+          <text>{{obj.no}}</text>
+        </view>
+        <view class="value">
+          <text>{{obj.start_end}}</text>
+        </view>
+        <view class="value">
+          <text>{{obj.start_time}}</text>
+        </view>
+        <view class="value">
+          <text>{{obj.arrive_time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

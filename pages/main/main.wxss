@@ -1,0 +1,213 @@
+.input-box{
+  display: flex;
+  padding: 0 30rpx;
+}
+.input-box .wrap{
+  position: relative;
+  flex: 1;
+}
+.input-box .input{
+  width: 100%;
+  height: 80rpx;
+  padding: 0 20rpx;
+  background-color: #f8f8f8;
+  border: 1px solid #eeeeee;
+  font-size: 34rpx;
+  box-sizing: border-box;
+}
+.input-box .btn-get{
+  position: absolute;
+  z-index: 9;
+  top: 0;
+  right: 30rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  color: #1b84e6;
+  font-size: 30rpx;
+}
+.input-box .btn-query{
+  margin: 0 0 0 10rpx;
+  padding: 0 40rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 32rpx;
+  background-color: rgb(27, 132, 230);
+  color: #ffffff;
+  border-radius: 8rpx;
+}
+.grid-wrap{
+  margin: 40rpx 30rpx;
+  text-align: center;
+  font-size: 32rpx;
+}
+.grid-wrap .table{
+  width: 100%;
+  display: table;
+}
+.grid-wrap .title{
+  display: table-cell;
+  padding: 30rpx 0;
+  vertical-align: middle;
+  border-bottom: 1rpx solid #eeeeee;
+}
+.grid-wrap .value{
+  display: table-cell;
+  padding: 30rpx 0;
+  vertical-align: middle;
+  border-bottom: 1rpx solid #eeeeee;
+}
+.grid-wrap .time{
+  line-height: 50rpx;
+}
+.grid-wrap .value text{
+  align-self: center;
+}
+.grid-wrap .grid{
+  width: 100%;
+  display: table-row;
+}
+
+.gui-box{
+  margin: 100rpx 130rpx 80rpx; 
+}
+.gui-box .row-box{
+  position: relative;
+  margin: 0 0 0;
+  height: 200rpx;
+  white-space: nowrap;
+}
+.gui-box .row-box:nth-child(2n){
+  direction: rtl;
+}
+.gui-box .row-box:first-child{
+  border-top: 6rpx solid #1b84e6;
+}
+.gui-box .row-box::before{
+  content: '';
+  position: absolute;
+  top: -6rpx;
+  right: -100rpx;
+  width: 100%;
+  height: 206rpx;
+  border-top: 6rpx solid #1b84e6;
+  border-right: 6rpx solid #1b84e6;
+  border-bottom: 6rpx solid #1b84e6;
+  border-radius: 0 200rpx 200rpx 0;
+  box-sizing: border-box;
+}
+.gui-box .row-box:nth-child(2n)::before{
+  right: auto;
+  left: -100rpx;
+  border-left: 6rpx solid #1b84e6;
+  border-right-width: 0;
+  border-radius: 200rpx 0 0 200rpx;
+}
+.gui-box .row-box:first-child::before{
+  top: -3rpx;
+  height: 203rpx;
+}
+.gui-box .row-box:last-child{
+  margin: -6rpx 0 0;
+  border-top: 6rpx solid #1b84e6;
+}
+.gui-box .row-box:last-child::before{
+  height: 0;
+  border-width: 0;
+}
+.gui-box .row-box .pos-start{
+  position: absolute;
+  top: -75rpx;
+  left: 0;
+}
+.gui-box .row-box .pos-end .icon,
+.gui-box .row-box .pos-start .icon{
+  position: absolute;
+  top: 0;
+  left: -24rpx;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 80% 0 55% 50% / 55% 0 80% 50%;
+  background-color: #333333;
+  transform: rotate(135deg);
+}
+.gui-box .row-box .pos-end .text,
+.gui-box .row-box .pos-start .text{
+  position: absolute;
+  z-index: 5;
+  top: 4rpx;
+  left: -14rpx;
+  color: #ffffff;
+  font-size: 30rpx;
+}
+.gui-box .row-box .pos-end{
+  position: absolute;
+  top: -75rpx;
+  left: 80rpx;
+}
+.gui-box .row-box .pos-city{
+  position: relative;
+  display: inline-block;
+  margin: 0 80rpx 0 -80rpx;
+  width: 160rpx;
+  vertical-align: top;
+  text-align: center;
+}
+.gui-box .row-box:nth-child(2n) .pos-city{
+  margin: 0 -80rpx 0 80rpx;
+}
+.gui-box .row-box .pos-city>.icon{
+  position: absolute;
+  top: -12rpx;
+  left: 50%;
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 100%;
+  background-color: #1b84e6;
+  transform: translate(-50%, 0);
+}
+.gui-box .row-box .pos-city>.text{
+  margin: 20rpx 0 0;
+  font-size: 30rpx;
+}
+.gui-box .row-box .pos-city>.time{
+  line-height: 32rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+.gui-box .row-box .pos-city>.time .red{
+  color: #dc0032;
+}
+.gui-box .row-box .pos-city>.time .green{
+  color: #00af43;
+}
+.gui-box .row-box .pos-train{
+  position: absolute;
+  left: 0;
+  top: -65rpx;
+}
+.gui-box .row-box .pos-train.arrive{
+  left: 50rpx;
+}
+.gui-box .row-box .pos-train.start{
+  left: 130rpx;
+}
+.gui-box .row-box:nth-child(2n) .pos-train.start{
+  left: -30rpx;
+}
+.gui-box .row-box .pos-train .icon{
+  display: inline-block;
+  width: 60rpx;
+  height: 60rpx;
+}
+.gui-box .row-box:nth-child(2n) .pos-train .icon{
+  transform: scale(-1, 1);
+}
+.gui-box .row-box .pos-city:last-child .pos-train.start{
+  top: 65rpx;
+}
+.gui-box .row-box .pos-city:last-child .pos-train.start .icon{
+  transform: rotate(90deg) scale(1, -1);
+}
+.gui-box .row-box:nth-child(2n) .pos-city:last-child .pos-train.start .icon{
+  transform: rotate(270deg) scale(-1, -1);
+}
