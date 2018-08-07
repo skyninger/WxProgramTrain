@@ -125,6 +125,7 @@ Page({
       czEn: encodeURI(objProp.city.replace(/\s+/g,"")).replace(/%/g,"-")
     }
     this.$_getZwd(objPost, objProp.index, () => {
+      this.$_computedRun()
       setTimeout(() => {
         let objPost1 = Object.assign(objPost, {
           cxlx: 1
@@ -222,6 +223,10 @@ Page({
       if (intTime > intStart && intTime < intArrive) {
         arrTmp.run = 1
       } else if (selfArrive <= intTime && intTime <= intStart) {
+        arrTmp.run = 0
+      } else if (intTime > intStart && intTime > intArrive && intStart > intArrive && i !== 0 && i !== arrData.length - 1) {
+        arrTmp.run = 1
+      } else if (selfArrive <= intTime && intTime >= intStart && selfArrive > intStart && i !== 0 && i !== arrData.length - 1) {
         arrTmp.run = 0
       } else {
         arrTmp.run = -1

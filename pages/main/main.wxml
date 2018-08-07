@@ -8,6 +8,7 @@
   </view>
   <view class="gui-box" wx:if="{{arrDataPic.length}}">
     <view class="row-box" wx:for="{{arrDataPic}}" wx:for-item="data" wx:for-index="index" wx:key="{{index}}">
+      <div class="cover-line" style="width: {{(4 - data.length)*160}}rpx"></div>
       <view class="pos-start" wx:if="{{index===0}}">
         <text class="text">始</text>
         <text class="icon"></text>
@@ -129,6 +130,7 @@
           <image class="icon" src="/images/train_arrive.png"></image>
         </view>
       </view>
+      <div class="cover-line" style="width: {{100}}rpx"></div>
     </view>
   </view>
 </view>
