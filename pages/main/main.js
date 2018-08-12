@@ -124,16 +124,25 @@ Page({
       rq: util.formatTime(new Date(), '-', 'date'),
       czEn: encodeURI(objProp.city.replace(/\s+/g,"")).replace(/%/g,"-")
     }
+    let boolSingle = false
+    if (objProp.index === 0) {
+      objPost.cxlx = 1
+      boolSingle = true
+    } else if (objProp.index === this.data.arrData.length - 1) {
+      boolSingle = true
+    }
     this.$_getZwd(objPost, objProp.index, () => {
       this.$_computedRun()
-      setTimeout(() => {
-        let objPost1 = Object.assign(objPost, {
-          cxlx: 1
-        })
-        this.$_getZwd(objPost1, objProp.index, () => {
-          this.$_computedRun()
-        })
-      }, parseInt(Math.random() * 2000) + 500)
+      if (!boolSingle) {
+        setTimeout(() => {
+          let objPost1 = Object.assign(objPost, {
+            cxlx: 1
+          })
+          this.$_getZwd(objPost1, objProp.index, () => {
+            this.$_computedRun()
+          })
+        }, parseInt(Math.random() * 2000) + 500)
+      }
     })
   },
   $_getZwd: function (objPost, index, callback) {
@@ -220,11 +229,12 @@ Page({
           intArrive = parseInt(arrData[i+1].arrive_time.replace(':',''))
         }
       }
+      /* console.log(selfArrive, intStart, intArrive, intTime) */
       if (intTime > intStart && intTime < intArrive) {
         arrTmp.run = 1
       } else if (selfArrive <= intTime && intTime <= intStart) {
         arrTmp.run = 0
-      } else if (intTime > intStart && intTime > intArrive && intStart > intArrive && i !== 0 && i !== arrData.length - 1) {
+      } else if ((intTime > intStart && intTime > intArrive || intTime < intStart && intTime < intArrive) && intStart > intArrive && i !== 0 && i !== arrData.length - 1) {
         arrTmp.run = 1
       } else if (selfArrive <= intTime && intTime >= intStart && selfArrive > intStart && i !== 0 && i !== arrData.length - 1) {
         arrTmp.run = 0
@@ -253,7 +263,7 @@ Page({
     }
   },
   onLoad: function (options) {
-    console.log(options)
+    /* console.log(options) */
     this.setData({
       no: options.no ? options.no : ''
     })
