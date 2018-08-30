@@ -1,3 +1,6 @@
+.content-wrap{
+  overflow-x: hidden;
+}
 .input-box{
   display: flex;
   padding: 0 30rpx;

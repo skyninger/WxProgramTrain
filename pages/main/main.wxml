@@ -1,4 +1,4 @@
-<view>
+<view class="content-wrap">
   <view class="input-box">
     <view class="wrap">
       <input class="input" type="text" value="{{no}}" bindinput="handlerInput" data-name="no" placeholder="请输入车次"></input>
