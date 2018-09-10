@@ -24,8 +24,9 @@
           <text>到达</text>
         </view>
       </view>
-      <view class="grid" wx:for="{{arrData}}" wx:key="{{key}}" wx:for-item="obj" bindtap="handlerSelect" data-no="{{obj.no}}" data-code="{{obj.code}}">
-        <view class="value">
+      <view class="grid" wx:for="{{arrData}}" wx:key="{{key}}" wx:for-item="obj" bindtap="handlerSelect" data-no="{{obj.no}}" data-code="{{obj.code}}" data-date="{{date}}">
+        <view class="value left">
+          <text class="score {{obj.exchange?'show':''}}">兑</text>
           <text>{{obj.no}}</text>
         </view>
         <view class="value">

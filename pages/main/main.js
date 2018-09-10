@@ -6,7 +6,8 @@ Page({
     objTrainList: {},
     arrData: [],
     arrDataBy: [],
-    arrDataPic: []
+    arrDataPic: [],
+    strTrainListDate: util.formatTime(new Date(), '-', 'date')
   },
   handlerSelect: function () {
     wx.navigateTo({
@@ -22,7 +23,7 @@ Page({
       objTrainList[strDate] = {}
     }
     if (objTrainList[strDate][strNo]) {
-      this.$_queryTrainList(objTrainList[strDate][strNo])
+      this.$_queryTrainList(objTrainList[strDate][strNo], strDate)
     } else if (strNo) {
       wx.showLoading({title: '读取中', mask: true})
       util.$http.get('https://mobile.12306.cn/weixin/wxcore/queryTrain', {
@@ -52,8 +53,9 @@ Page({
       })
     }
   },
-  $_queryTrainList: function (data) {
+  $_queryTrainList: function (data, date) {
     let strTrainNo = ''
+    let strDate = date || util.formatTime(new Date(), '-', 'date')
     this.setData({arrData: [], arrDataPic: []})
     for (let obj of data) {
       if (this.data.no === obj.ticket_no) {
@@ -71,12 +73,16 @@ Page({
     }
     if (strTrainNo) {
       wx.showLoading({title: '读取中', mask: true})
+      /*
+      * wap:https://mobile.12306.cn/weixin/czxx/queryByTrainNo
+      * pc:https://kyfw.12306.cn/otn/czxx/queryByTrainNo
+      */
       util.$http.get('https://mobile.12306.cn/weixin/czxx/queryByTrainNo', {
         data: {
           train_no: strTrainNo,
           from_station_telecode: 'BBB',
           to_station_telecode: 'BBB',
-          depart_date: util.formatTime(new Date(), '-', 'date')
+          depart_date: strDate
         }
       }).then(response => {
         console.log(response)
@@ -90,6 +96,7 @@ Page({
         })
         this.$_computedRun()
         if (!objData.data.data.length) {
+          this.setData({arrDataPic: []})
           wx.showModal({
             content: `${this.data.no}不存在`,
             showCancel: false
@@ -263,7 +270,7 @@ Page({
     }
   },
   onLoad: function (options) {
-    /* console.log(options) */
+    console.log(options)
     this.setData({
       no: options.no ? options.no : ''
     })
@@ -272,7 +279,7 @@ Page({
         ticket_no: options.no,
         train_code: options.code
       }
-      this.$_queryTrainList([objData])
+      this.$_queryTrainList([objData], options.date)
       this.setData({arrDataBy: [objData]})
     }
   }

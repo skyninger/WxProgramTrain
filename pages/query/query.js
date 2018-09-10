@@ -11,7 +11,7 @@ Page({
   handlerSelect: function (e) {
     let objProp = e.currentTarget.dataset
     wx.reLaunch({
-      url: '../main/main?no=' + objProp.no + '&code=' + objProp.code
+      url: '../main/main?no=' + objProp.no + '&code=' + objProp.code + '&date=' + objProp.date
     })
   },
   query: function () {
@@ -26,7 +26,7 @@ Page({
     console.log(objPost)
     if (this.data.date && cityStartCode && cityArriveCode) {   
       wx.showNavigationBarLoading()
-      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/query', {
+      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/queryA', {
         data: objPost
       }).then(response => {
         console.log(response)
@@ -36,12 +36,21 @@ Page({
         let arrTmp = []
         for (let i = 0; i < arrData.length; i++) {
           let arrTmpSplit = arrData[i].split('|')
+          let strStart = this.$_convertCity(arrTmpSplit[4], false)
+          let strEnd = this.$_convertCity(arrTmpSplit[5], false)
+          /* if (arrTmpSplit[4] !== arrTmpSplit[6]) {
+            strStart = this.$_convertCity(arrTmpSplit[4], false) + '/' + this.$_convertCity(arrTmpSplit[6], false)
+          }
+          if (arrTmpSplit[5] !== arrTmpSplit[7]) {
+            strEnd = this.$_convertCity(arrTmpSplit[5], false) + '/' + this.$_convertCity(arrTmpSplit[7], false)
+          } */
           arrTmp.push({
             no: arrTmpSplit[3],
-            start_end: this.$_convertCity(arrTmpSplit[4], false) + '-' + this.$_convertCity(arrTmpSplit[5], false),
+            start_end: strStart + '-' + strEnd,
             start_time: arrTmpSplit[8],
             arrive_time: arrTmpSplit[9],
-            code: arrTmpSplit[2]
+            code: arrTmpSplit[2],
+            exchange: !!parseInt(arrTmpSplit[36])
           })
         }
         this.setData({
@@ -97,6 +106,11 @@ Page({
       }else if(name_z[2]==city && !bool){
         return name_z[1]
       }
+    }
+    if (!bool && city.toLocaleLowerCase() === 'jqo') {
+      return '九龙'
+    } else if (bool && city === '九龙') {
+      return 'JQO'
     }
     return ''
   },

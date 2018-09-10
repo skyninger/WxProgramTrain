@@ -52,3 +52,21 @@
   width: 100%;
   display: table-row;
 }
+.grid-wrap .value.left{
+  padding: 0 0 0 18rpx;
+  text-align: left;
+}
+.grid-wrap .value text{
+  display: inline-block;
+  vertical-align: middle;
+}
+.grid-wrap .value .score{
+  margin: 0 6rpx 0 0;
+  padding: 0 6rpx;
+  color:#ffffff;
+  background-color: #ffffff;
+  font-size: 20rpx;
+}
+.grid-wrap .value .score.show{
+  background-color: #1b84e6;
+}
