@@ -5,13 +5,65 @@ Page({
   data: {
     citystart: '上海',
     cityend: '海宁',
+    mindate: util.formatTime(new Date(), '-', 'date'),
     date: util.formatTime(new Date(), '-', 'date'),
     arrData: []
   },
+  handlerSellTip: function (e) {
+    let objData = this.data.arrData[e.currentTarget.dataset.index] || {}
+    wx.showModal({
+      title: `${this.data.citystart}-${this.data.cityend}`,
+      content: `${objData.no}次列车已售完。`,
+      showCancel: false
+    })
+  },
+  handlerScoreTip: function (e) {
+    let objData = this.data.arrData[e.currentTarget.dataset.index] || {}
+    if (objData.exchange) {
+      wx.showModal({
+        title: `${this.data.citystart}-${this.data.cityend}`,
+        content: `${objData.no}次可积分兑换，100积分=1元。`,
+        showCancel: false
+      })
+    }
+  },
+  handlerStopTip: function (e) {
+    console.log('停运说明', this.data.arrData[e.currentTarget.dataset.index])
+    let objData = this.data.arrData[e.currentTarget.dataset.index] || {}
+    let arrDate = this.data.date.split('-')
+    wx.showModal({
+      title: objData.start_end,
+      content: `由于${objData.no}次${objData.textInfo}，${arrDate[0]}年${arrDate[1]}月${arrDate[2]}日停售`,
+      showCancel: false
+    })
+  },
   handlerSelect: function (e) {
     let objProp = e.currentTarget.dataset
-    wx.reLaunch({
+    /* wx.reLaunch({
       url: '../main/main?no=' + objProp.no + '&code=' + objProp.code + '&date=' + objProp.date
+    }) */
+    let pages = getCurrentPages()
+    let prevPage = pages[pages.length-2]
+    wx.navigateBack({
+      delta: 1
+    })
+    prevPage.setData({
+      arrDataBy: [{
+        ticket_no: objProp.no,
+        train_code: objProp.code
+      }],
+      no: objProp.no
+    })
+    prevPage.$_queryTrainList([{
+      ticket_no: objProp.no,
+      train_code: objProp.code
+    }], objProp.date)
+  },
+  handlerSwitch: function (e) {
+    let strEnd = this.data.cityend
+    this.setData({
+      citystart: strEnd,
+      cityend: this.data.citystart
     })
   },
   query: function () {
@@ -47,10 +99,12 @@ Page({
           arrTmp.push({
             no: arrTmpSplit[3],
             start_end: strStart + '-' + strEnd,
-            start_time: arrTmpSplit[8],
-            arrive_time: arrTmpSplit[9],
+            start_time: parseInt(arrTmpSplit[19])===0 ? arrTmpSplit[8] : '--:--',
+            arrive_time: parseInt(arrTmpSplit[19])===0 ? arrTmpSplit[9] : '--:--',
             code: arrTmpSplit[2],
-            exchange: !!parseInt(arrTmpSplit[36])
+            exchange: !!parseInt(arrTmpSplit[36]),
+            canWebBuy: arrTmpSplit[11].toLocaleUpperCase(),
+            textInfo: arrTmpSplit[1]
           })
         }
         this.setData({
@@ -113,6 +167,11 @@ Page({
       return 'JQO'
     }
     return ''
+  },
+  bindDateChange: function (e) {
+    this.setData({
+      date: e.detail.value
+    })
   },
   handlerInput: function (e) {
     let objTmp = {}

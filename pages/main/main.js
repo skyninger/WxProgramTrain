@@ -270,7 +270,7 @@ Page({
     }
   },
   onLoad: function (options) {
-    console.log(options)
+    /* console.log(options)
     this.setData({
       no: options.no ? options.no : ''
     })
@@ -281,6 +281,6 @@ Page({
       }
       this.$_queryTrainList([objData], options.date)
       this.setData({arrDataBy: [objData]})
-    }
+    } */
   }
 })

@@ -1,11 +1,13 @@
 <view>
   <view class="input-box">
     <input class="input" type="text" value="{{citystart}}" bindinput="handlerInput" data-name="citystart" placeholder="请输入出发城市"></input>
-    <view class="sign">-</view>
+    <view class="sign" bindtap="handlerSwitch">=</view>
     <input class="input" type="text" value="{{cityend}}" bindinput="handlerInput" data-name="cityend" placeholder="请输入到达城市"></input>
   </view>
   <view class="input-box">
-    <input class="input" type="text" value="{{date}}" bindinput="handlerInput" data-name="date" placeholder="请选择日期"></input>
+    <picker class="picker-input" mode="date" value="{{date}}" start="{{mindate}}" bindchange="bindDateChange">
+      <view class="input">{{date?date:'请选择日期'}}</view>
+    </picker>
     <view class="btn-query" bindtap="query">查询</view>
   </view>
   <view class="grid-wrap" wx:if="{{arrData.length}}">
@@ -24,9 +26,11 @@
           <text>到达</text>
         </view>
       </view>
-      <view class="grid" wx:for="{{arrData}}" wx:key="{{key}}" wx:for-item="obj" bindtap="handlerSelect" data-no="{{obj.no}}" data-code="{{obj.code}}" data-date="{{date}}">
+      <view class="grid" wx:for="{{arrData}}" wx:for-index="index" wx:key="index" wx:for-item="obj" bindtap="handlerSelect" data-no="{{obj.no}}" data-code="{{obj.code}}" data-date="{{date}}">
         <view class="value left">
-          <text class="score {{obj.exchange?'show':''}}">兑</text>
+          <text class="stop show" wx:if="{{obj.canWebBuy==='IS_TIME_NOT_BUY'}}" catchtap="handlerStopTip" data-index="{{index}}">停</text>
+          <text class="finish show" wx:if="{{obj.canWebBuy==='N'}}" catchtap="handlerSellTip" data-index="{{index}}">罄</text>
+          <text class="score {{obj.exchange?'show':''}}" wx:if="{{obj.canWebBuy==='Y' || obj.exchange}}" catchtap="handlerScoreTip" data-index="{{index}}">兑</text>
           <text>{{obj.no}}</text>
         </view>
         <view class="value">
