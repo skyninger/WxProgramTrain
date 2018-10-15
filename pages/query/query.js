@@ -77,12 +77,10 @@ Page({
     }
     console.log(objPost)
     if (this.data.date && cityStartCode && cityArriveCode) {   
-      wx.showNavigationBarLoading()
-      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/queryA', {
+      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/queryO', {
         data: objPost
       }).then(response => {
         console.log(response)
-        wx.hideNavigationBarLoading()
         const objData = response.data
         const arrData = objData.data.result
         let arrTmp = []

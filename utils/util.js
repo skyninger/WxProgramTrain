@@ -36,6 +36,7 @@ const $http = (URL, options = {}) => {
 
 $http.get = (URL, options = {}) => {
   return new Promise((resolve, reject) => {
+    wx.showNavigationBarLoading()
     wx.request(Object.assign({
       url: URL,
       method: 'GET',
@@ -44,6 +45,9 @@ $http.get = (URL, options = {}) => {
       },
       fail: err => {
         reject(err)
+      },
+      complete: () => {
+        wx.hideNavigationBarLoading()
       }
     }, options))
   })
@@ -51,6 +55,7 @@ $http.get = (URL, options = {}) => {
 
 $http.post = (URL, options = {}) => {
   return new Promise((resolve, reject) => {
+    wx.showNavigationBarLoading()
     wx.request(Object.assign({
       url: URL,
       method: 'POST',
@@ -59,6 +64,9 @@ $http.post = (URL, options = {}) => {
       },
       fail: err => {
         reject(err)
+      },
+      complete: () => {
+        wx.hideNavigationBarLoading()
       }
     }, options))
   })

@@ -154,13 +154,11 @@ Page({
   },
   $_getZwd: function (objPost, index, callback) {
     let arrData = this.data.arrData
-    wx.showNavigationBarLoading()
     util.$http.get('https://dynamic.12306.cn/mapping/kfxt/zwdcx/LCZWD/cx.jsp', {
       data: objPost,
       header: {'Content-Type':'application/json; charset=utf-8'}
     }).then(response => {
       console.log(response)
-      wx.hideNavigationBarLoading()
       const strData = response.data
       let arrValue = strData.match(/(\d{2}:\d{2})/g)
       let strOut = '无数据'
