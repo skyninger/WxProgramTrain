@@ -1,3 +1,6 @@
+.opacity0{
+  opacity: 0;
+}
 .content-wrap{
   overflow-x: hidden;
 }
@@ -177,11 +180,18 @@
   font-size: 24rpx;
   color: #999999;
 }
+.gui-box .row-box .pos-city>.time text{
+  display: inline;
+}
 .gui-box .row-box .pos-city>.time .red{
   color: #dc0032;
 }
 .gui-box .row-box .pos-city>.time .green{
   color: #00af43;
+}
+.gui-box .row-box .pos-city>.time .sign{
+  display: inline;
+  text-align: center;
 }
 .gui-box .row-box .pos-train{
   position: absolute;

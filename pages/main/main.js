@@ -7,7 +7,8 @@ Page({
     arrData: [],
     arrDataBy: [],
     arrDataPic: [],
-    strTrainListDate: util.formatTime(new Date(), '-', 'date')
+    strTrainListDate: util.formatTime(new Date(), '-', 'date'),
+    boolZwdRunning: false
   },
   handlerSelect: function () {
     wx.navigateTo({
@@ -23,7 +24,8 @@ Page({
       objTrainList[strDate] = {}
     }
     if (objTrainList[strDate][strNo]) {
-      this.$_queryTrainList(objTrainList[strDate][strNo], strDate)
+      let strDateTmp = util.formatTime(myDate, '-', 'date')
+      this.$_queryTrainList(objTrainList[strDate][strNo], strDateTmp)
     } else if (strNo) {
       wx.showLoading({title: '读取中', mask: true})
       util.$http.get('https://mobile.12306.cn/weixin/wxcore/queryTrain', {
@@ -91,6 +93,13 @@ Page({
         /* wx.showModal({
           content: JSON.stringify(objData)
         }) */
+        let arrDataDeal = objData.data.data || []
+        for (let i = 0; i < arrDataDeal.length; i++) {
+          arrDataDeal[i].arrive_time_deal = arrDataDeal[i].arrive_time
+          arrDataDeal[i].arrive_time_zwd_sign = -1
+          arrDataDeal[i].start_time_deal = arrDataDeal[i].start_time
+          arrDataDeal[i].start_time_zwd_sign = -1
+        }
         this.setData({
           arrData: objData.data.data
         })
@@ -102,6 +111,12 @@ Page({
             showCancel: false
           })
         }
+      }).catch(err => {
+        wx.hideLoading()
+        wx.showModal({
+          content: `${err}`,
+          showCancel: false
+        })
       })
     } else {
       wx.hideLoading()
@@ -124,6 +139,8 @@ Page({
   },
   handlerZwdPic: function (e) {
     const objProp = e.currentTarget.dataset
+    const objSelectData = this.data.arrData[parseInt(objProp.index)]
+    /* console.log('handlerZwdPic', objSelectData) */
     let objPost = {
       cxlx: 0,
       cz: objProp.city,
@@ -137,20 +154,38 @@ Page({
       boolSingle = true
     } else if (objProp.index === this.data.arrData.length - 1) {
       boolSingle = true
-    }
-    this.$_getZwd(objPost, objProp.index, () => {
-      this.$_computedRun()
-      if (!boolSingle) {
-        setTimeout(() => {
-          let objPost1 = Object.assign(objPost, {
-            cxlx: 1
-          })
-          this.$_getZwd(objPost1, objProp.index, () => {
-            this.$_computedRun()
-          })
-        }, parseInt(Math.random() * 2000) + 500)
+    } else {
+      if (objSelectData.arrive_time_zwd_sign === -1) {
+        objPost.cxlx = 0
+      } else if (objSelectData.start_time_zwd_sign === -1) {
+        objPost.cxlx = 1
       }
-    })
+    }
+    /* if (!this.data.boolZwdRunning) {
+      this.setData({
+        boolZwdRunning: true
+      }) */
+      this.$_getZwd(objPost, objProp.index, () => {
+        this.$_computedRun()
+        if (!boolSingle) {
+          setTimeout(() => {
+            let objPost1 = Object.assign({}, objPost, {
+              cxlx: objPost.cxlx === 0 ? 1 : 0
+            })
+            this.$_getZwd(objPost1, objProp.index, () => {
+              this.$_computedRun()
+              /* this.setData({
+                boolZwdRunning: false
+              }) */
+            })
+          }, parseInt(Math.random() * 2000) + 500)
+        } else {
+          /* this.setData({
+            boolZwdRunning: false
+          }) */
+        }
+      })
+    /* } */
   },
   $_getZwd: function (objPost, index, callback) {
     let arrData = this.data.arrData
@@ -161,7 +196,7 @@ Page({
       console.log(response)
       const strData = response.data
       let arrValue = strData.match(/(\d{2}:\d{2})/g)
-      let strOut = '无数据'
+      let strOut = '未定'
       let intType = -1
       if(arrValue) {
         strOut = arrValue[0];
@@ -183,9 +218,19 @@ Page({
       if (parseInt(objPost.cxlx) === 0) {
         arrData[parseInt(index)].arrive_time_zwd_sign = intType
         arrData[parseInt(index)].arrive_time_zwd = strOut
+        if (intType === -1) {
+          arrData[parseInt(index)].arrive_time_deal = arrData[parseInt(index)].arrive_time
+        } else {
+          arrData[parseInt(index)].arrive_time_deal = strOut
+        }
       } else if (parseInt(objPost.cxlx) === 1) {
         arrData[parseInt(index)].start_time_zwd_sign = intType
         arrData[parseInt(index)].start_time_zwd = strOut
+        if (intType === -1) {
+          arrData[parseInt(index)].start_time_deal = arrData[parseInt(index)].start_time
+        } else {
+          arrData[parseInt(index)].start_time_deal = strOut
+        }
       }
       this.setData({
         arrData: arrData
@@ -216,23 +261,23 @@ Page({
     for (let i = 0; i < arrData.length; i++) {
       let arrTmp = Object.assign({}, arrData[i])
       let intArrive = 0
-      let selfArrive = parseInt(arrData[i].arrive_time.replace(':',''))
-      let intStart = parseInt(arrData[i].start_time.replace(':',''))
-      if (arrData[i].arrive_time_zwd && arrData[i].arrive_time_zwd!=='无数据') {
+      let selfArrive = parseInt(arrData[i].arrive_time_deal.replace(':',''))
+      let intStart = parseInt(arrData[i].start_time_deal.replace(':',''))
+      /* if (arrData[i].arrive_time_zwd && arrData[i].arrive_time_zwd!=='无数据') {
         selfArrive = parseInt(arrData[i].arrive_time_zwd.replace(':',''))
       }
       if (arrData[i].start_time_zwd && arrData[i].start_time_zwd!=='无数据') {
         intStart = parseInt(arrData[i].start_time_zwd.replace(':',''))
-      }
+      } */
       if (i===arrData.length-1) {
         intArrive = selfArrive
         intStart = selfArrive
       } else {
-        if (arrData[i+1].arrive_time_zwd && arrData[i+1].arrive_time_zwd!=='无数据') {
+        /* if (arrData[i+1].arrive_time_zwd && arrData[i+1].arrive_time_zwd!=='无数据') {
           intArrive = parseInt(arrData[i+1].arrive_time_zwd.replace(':',''))
-        } else {
-          intArrive = parseInt(arrData[i+1].arrive_time.replace(':',''))
-        }
+        } else { */
+          intArrive = parseInt(arrData[i+1].arrive_time_deal.replace(':',''))
+        /* } */
       }
       /* console.log(selfArrive, intStart, intArrive, intTime) */
       if (intTime > intStart && intTime < intArrive) {

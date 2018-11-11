@@ -77,7 +77,7 @@ Page({
     }
     console.log(objPost)
     if (this.data.date && cityStartCode && cityArriveCode) {   
-      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/queryO', {
+      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/query', {
         data: objPost
       }).then(response => {
         console.log(response)
