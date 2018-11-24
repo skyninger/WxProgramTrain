@@ -2,6 +2,7 @@
   opacity: 0;
 }
 .content-wrap{
+  margin: 20rpx 0 0;
   overflow-x: hidden;
 }
 .input-box{
@@ -28,7 +29,7 @@
   right: 30rpx;
   height: 80rpx;
   line-height: 80rpx;
-  color: #1b84e6;
+  color: #666666;
   font-size: 30rpx;
 }
 .input-box .btn-query{
@@ -37,7 +38,7 @@
   height: 80rpx;
   line-height: 80rpx;
   font-size: 32rpx;
-  background-color: rgb(27, 132, 230);
+  background-color: #333333;
   color: #ffffff;
   border-radius: 8rpx;
 }

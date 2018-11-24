@@ -114,7 +114,7 @@ Page({
       }).catch(err => {
         wx.hideLoading()
         wx.showModal({
-          content: `${err}`,
+          content: `${JSON.stringify(err)}`,
           showCancel: false
         })
       })
@@ -261,23 +261,15 @@ Page({
     for (let i = 0; i < arrData.length; i++) {
       let arrTmp = Object.assign({}, arrData[i])
       let intArrive = 0
+      let planSelfArrive = parseInt(arrData[i].arrive_time.replace(':',''))
+      let planStart = parseInt(arrData[i].start_time.replace(':',''))
       let selfArrive = parseInt(arrData[i].arrive_time_deal.replace(':',''))
       let intStart = parseInt(arrData[i].start_time_deal.replace(':',''))
-      /* if (arrData[i].arrive_time_zwd && arrData[i].arrive_time_zwd!=='无数据') {
-        selfArrive = parseInt(arrData[i].arrive_time_zwd.replace(':',''))
-      }
-      if (arrData[i].start_time_zwd && arrData[i].start_time_zwd!=='无数据') {
-        intStart = parseInt(arrData[i].start_time_zwd.replace(':',''))
-      } */
       if (i===arrData.length-1) {
         intArrive = selfArrive
         intStart = selfArrive
       } else {
-        /* if (arrData[i+1].arrive_time_zwd && arrData[i+1].arrive_time_zwd!=='无数据') {
-          intArrive = parseInt(arrData[i+1].arrive_time_zwd.replace(':',''))
-        } else { */
-          intArrive = parseInt(arrData[i+1].arrive_time_deal.replace(':',''))
-        /* } */
+        intArrive = parseInt(arrData[i+1].arrive_time_deal.replace(':',''))
       }
       /* console.log(selfArrive, intStart, intArrive, intTime) */
       if (intTime > intStart && intTime < intArrive) {
@@ -291,6 +283,11 @@ Page({
       } else {
         arrTmp.run = -1
       }
+
+      if (!(planSelfArrive <= planStart && selfArrive <= intStart || planSelfArrive > planStart && selfArrive > intStart || intTime >= selfArrive)) {
+        arrTmp.run = -1
+      }
+
       arrResult.push(arrTmp)
     }
     this.setData({

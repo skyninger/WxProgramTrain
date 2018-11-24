@@ -1,7 +1,7 @@
 <view class="content-wrap">
   <view class="input-box">
     <view class="wrap">
-      <input class="input" type="text" value="{{no}}" bindinput="handlerInput" data-name="no" placeholder="请输入车次"></input>
+      <input class="input" type="text" value="{{no}}" bindinput="handlerInput" data-name="no" placeholder="请输入车次" placeholder-style="color: #bbbbbb;"></input>
       <view class="btn-get" bindtap="handlerSelect">获取</view>
     </view>
     <text class="btn-query" bindtap="query">查询</text>
@@ -50,97 +50,6 @@
           <image class="icon" src="/images/train_arrive.png"></image>
         </view>
       </view>
-    </view>
-  </view>
-  <view class="grid-wrap" wx:if="{{false}}">
-    <view class="table">
-      <view class="grid">
-        <view class="title">
-          <text>序号</text>
-        </view>
-        <view class="title">
-          <text>站名</text>
-        </view>
-        <view class="title">
-          <text>到达</text>
-        </view>
-        <view class="title">
-          <text>出发</text>
-        </view>
-      </view>
-      <view class="grid" wx:for="{{arrData}}" wx:for-item="obj" wx:key="{{index}}">
-        <view class="value">
-          <text>{{obj.station_no}}</text>
-        </view>
-        <view class="value">
-          <text>{{obj.station_name}}</text>
-        </view>
-        <view class="value" bindtap="handlerZwd" data-city="{{obj.station_name}}" data-index="{{index}}" data-zwd="0">
-          <view class="time">计划{{obj.arrive_time}}</view>
-          <view class="time" wx:if="{{obj.arrive_time_zwd}}">{{obj.arrive_time_zwd_sign===1?'实际':''}}{{obj.arrive_time_zwd_sign===0?'预计':''}}{{obj.arrive_time_zwd}}</view>
-        </view>
-        <view class="value" bindtap="handlerZwd" data-city="{{obj.station_name}}" data-index="{{index}}" data-zwd="1">
-          <view class="time">计划{{obj.start_time}}</view>
-          <view class="time" wx:if="{{obj.start_time_zwd}}">{{obj.start_time_zwd_sign===1?'实际':''}}{{obj.start_time_zwd_sign===0?'预计':''}}{{obj.start_time_zwd}}</view>
-        </view>
-      </view>
-    </view>
-  </view>
-  <view class="gui-box" wx:if="{{false}}">
-    <view class="row-box">
-      <view class="pos-start">
-        <text class="text">始</text>
-        <text class="icon"></text>
-      </view>
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">上海南</view>
-        <view class="time">12:00发</view>
-      </view>
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">松江</view>
-        <view class="time">12:30-12:33</view>
-        <view class="pos-train arrive">
-          <image class="icon" src="/images/train_arrive.png"></image>
-        </view>
-      </view>
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">嘉善</view>
-        <view class="pos-train start">
-          <image class="icon" src="/images/train_start.png"></image>
-        </view>
-      </view>
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">嘉兴</view>
-      </view>
-    </view>
-    <view class="row-box">
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">海宁</view>
-        <view class="pos-train start">
-          <image class="icon" src="/images/train_start.png"></image>
-        </view>
-      </view>
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">杭州东</view>
-      </view>
-      <view class="pos-city">
-        <view class="icon"></view>
-        <view class="text">诸暨</view>
-        <view class="pos-end">
-          <text class="text">终</text>
-          <text class="icon"></text>
-        </view>
-        <view class="pos-train arrive">
-          <image class="icon" src="/images/train_arrive.png"></image>
-        </view>
-      </view>
-      <div class="cover-line" style="width: {{100}}rpx"></div>
     </view>
   </view>
 </view>

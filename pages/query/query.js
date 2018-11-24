@@ -7,7 +7,8 @@ Page({
     cityend: '海宁',
     mindate: util.formatTime(new Date(), '-', 'date'),
     date: util.formatTime(new Date(), '-', 'date'),
-    arrData: []
+    arrData: [],
+    currentScrollTop: 0
   },
   handlerSellTip: function (e) {
     let objData = this.data.arrData[e.currentTarget.dataset.index] || {}
@@ -39,9 +40,10 @@ Page({
   },
   handlerSelect: function (e) {
     let objProp = e.currentTarget.dataset
-    /* wx.reLaunch({
-      url: '../main/main?no=' + objProp.no + '&code=' + objProp.code + '&date=' + objProp.date
-    }) */
+    wx.setStorage({
+      key: 'queryScrollTop',
+      data: this.data.currentScrollTop
+    })
     let pages = getCurrentPages()
     let prevPage = pages[pages.length-2]
     wx.navigateBack({
@@ -215,10 +217,30 @@ Page({
       key: 'strQueryData',
       success: function(res) {
         console.log('strQueryData', res)
-        that.setData({
-          arrData: JSON.parse(res.data)
-        })
+        let arrData = JSON.parse(res.data)
+        if (arrData.length) {
+          wx.getStorage({
+            key: 'queryScrollTop',
+            complete: function(rres){
+              console.log('queryScrollTop', rres)
+              that.setData({
+                arrData: arrData
+              }, () => {
+                if (rres.data) {
+                  wx.pageScrollTo({
+                    scrollTop: parseFloat(rres.data)
+                  })
+                }
+              })
+            }
+          })
+        }
       } 
+    })
+  },
+  onPageScroll:function(e){
+    this.setData({
+      currentScrollTop: e.scrollTop
     })
   }
 })

@@ -1,5 +1,5 @@
 .input-box{
-  margin: 0 0 20rpx;
+  margin: 20rpx 0 20rpx;
   padding: 0 30rpx;
   display: flex;
 }
@@ -31,7 +31,7 @@
   height: 80rpx;
   line-height: 80rpx;
   font-size: 32rpx;
-  background-color: #1b84e6;
+  background-color: #333333;
   color: #ffffff;
   border-radius: 8rpx;
   text-align: center;
