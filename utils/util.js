@@ -22,6 +22,7 @@ const formatNumber = n => {
 
 const $http = (URL, options = {}) => {
   return new Promise((resolve, reject) => {
+    wx.showNavigationBarLoading()
     wx.request(Object.assign({
       url: URL,
       success: data => {
@@ -29,6 +30,9 @@ const $http = (URL, options = {}) => {
       },
       fail: err => {
         reject(err)
+      },
+      complete: () => {
+        wx.hideNavigationBarLoading()
       }
     }, options))
   })

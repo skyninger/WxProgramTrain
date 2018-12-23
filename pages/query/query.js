@@ -8,7 +8,8 @@ Page({
     mindate: util.formatTime(new Date(), '-', 'date'),
     date: util.formatTime(new Date(), '-', 'date'),
     arrData: [],
-    currentScrollTop: 0
+    currentScrollTop: 0,
+    queryUrl: 'leftTicket/query'
   },
   handlerSellTip: function (e) {
     let objData = this.data.arrData[e.currentTarget.dataset.index] || {}
@@ -79,7 +80,7 @@ Page({
     }
     console.log(objPost)
     if (this.data.date && cityStartCode && cityArriveCode) {   
-      util.$http.get('https://kyfw.12306.cn/otn/leftTicket/query', {
+      util.$http.get('https://kyfw.12306.cn/otn/' + this.data.queryUrl, {
         data: objPost
       }).then(response => {
         console.log(response)
@@ -141,6 +142,7 @@ Page({
           content: JSON.stringify(err),
           showCancel: false
         })
+        this.$_getQueryUrl()
       })
     } else {
       wx.showModal({
@@ -167,6 +169,38 @@ Page({
       return 'JQO'
     }
     return ''
+  },
+  $_getQueryUrl: function(callback) {
+    let boolCallback = true
+    util.$http.get('https://kyfw.12306.cn/otn/leftTicket/init').then(response => {
+      const strHtml = response.data
+      const REG_TAG = /<script[^>]*>([\s\S]*?)<\/script>/
+      if (REG_TAG.exec(strHtml).length > 1) {
+        const arrSource = REG_TAG.exec(strHtml)[1].split('\n')
+        const arrDeal = arrSource.filter(v => v.indexOf('CLeftTicketUrl') > -1)
+        console.log('$_getQueryUrl', arrDeal, arrSource)
+        if (arrDeal.length > 0) {
+          if (arrDeal[0].split('=').length > 1) {
+            let strUrl = arrDeal[0].split('=')[1].trim().replace(/[\'|;]/g, '')
+            this.setData({
+              queryUrl: strUrl
+            }, () => {
+              callback && callback(strUrl);
+            })
+            wx.setStorage({
+              key: 'queryUrl',
+              data: strUrl
+            })
+            boolCallback = false
+          }
+        }
+      }
+      if (boolCallback) {
+        callback && callback(this.data.queryUrl)
+      }
+    }).catch(err => {
+      callback && callback(this.data.queryUrl)
+    })
   },
   bindDateChange: function (e) {
     this.setData({
@@ -235,6 +269,15 @@ Page({
             }
           })
         }
+      } 
+    })
+    wx.getStorage({
+      key: 'queryUrl',
+      success: function(res) {
+        console.log('queryUrl', res)
+        that.setData({
+          queryUrl: res.data
+        })
       } 
     })
   },
