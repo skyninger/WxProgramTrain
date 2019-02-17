@@ -54,6 +54,7 @@
   display: table-cell;
   padding: 30rpx 0;
   border-bottom: 1rpx solid #eeeeee;
+  position: relative;
 }
 .grid-wrap .grid{
   width: 100%;
@@ -84,4 +85,27 @@
 }
 .grid-wrap .value .finish.show{
   background-color: #999999;
+}
+.grid-wrap .btm-txt{
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+  font-size: 24rpx;
+}
+.grid-wrap .btm-txt .tag{
+  display: inline-block;
+  margin: 0 4rpx;
+  width: 28rpx;
+  height: 28rpx;
+  line-height: 28rpx;
+  color: #20af5c;
+}
+.grid-wrap .btm-txt .tag.text{
+  display: inline;
+  margin: 0;
+}
+.grid-wrap .btm-txt .city{
+  color: #999999;
 }

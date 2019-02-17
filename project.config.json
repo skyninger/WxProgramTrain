@@ -5,13 +5,13 @@
 	},
 	"setting": {
 		"urlCheck": true,
-		"es6": true,
+		"es6": false,
 		"postcss": true,
 		"minified": true,
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.4.0",
+	"libVersion": "2.6.0",
 	"appid": "wxf832128ffa88d23a",
 	"projectname": "train",
 	"isGameTourist": false,

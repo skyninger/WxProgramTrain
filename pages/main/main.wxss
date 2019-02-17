@@ -110,8 +110,8 @@
   border-radius: 200rpx 0 0 200rpx;
 }
 .gui-box .row-box:first-child::before{
-  top: -3rpx;
-  height: 203rpx;
+  top: -5rpx;
+  height: 205rpx;
 }
 .gui-box .row-box:last-child{
   margin: -6rpx 0 0;
@@ -164,6 +164,7 @@
 }
 .gui-box .row-box .pos-city>.icon{
   position: absolute;
+  z-index: 99;
   top: -12rpx;
   left: 50%;
   width: 20rpx;

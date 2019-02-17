@@ -89,8 +89,10 @@ Page({
         let arrTmp = []
         for (let i = 0; i < arrData.length; i++) {
           let arrTmpSplit = arrData[i].split('|')
-          let strStart = this.$_convertCity(arrTmpSplit[4], false)
-          let strEnd = this.$_convertCity(arrTmpSplit[5], false)
+          let strStart = this.$_convertCity(arrTmpSplit[6], false)
+          let strEnd = this.$_convertCity(arrTmpSplit[7], false)
+          let strFirst = this.$_convertCity(arrTmpSplit[4], false)
+          let strLast = this.$_convertCity(arrTmpSplit[5], false)
           /* if (arrTmpSplit[4] !== arrTmpSplit[6]) {
             strStart = this.$_convertCity(arrTmpSplit[4], false) + '/' + this.$_convertCity(arrTmpSplit[6], false)
           }
@@ -100,12 +102,16 @@ Page({
           arrTmp.push({
             no: arrTmpSplit[3],
             start_end: strStart + '-' + strEnd,
+            first_last: strFirst + '-' + strLast,
             start_time: parseInt(arrTmpSplit[19])===0 ? arrTmpSplit[8] : '--:--',
             arrive_time: parseInt(arrTmpSplit[19])===0 ? arrTmpSplit[9] : '--:--',
             code: arrTmpSplit[2],
             exchange: !!parseInt(arrTmpSplit[36]),
             canWebBuy: arrTmpSplit[11].toLocaleUpperCase(),
-            textInfo: arrTmpSplit[1]
+            textInfo: arrTmpSplit[1],
+            isWo: this.$_boolHasPrice('wo', arrTmpSplit),
+            isZuo: this.$_boolHasPrice('zuo', arrTmpSplit),
+            isZhan: this.$_boolHasPrice('zhan', arrTmpSplit)
           })
         }
         this.setData({
@@ -151,6 +157,30 @@ Page({
         showCancel: false
       })
     }
+  },
+  $_boolHasPrice: function (how, data) {
+    let bool = false
+    let arrData = data || []
+    if (arrData.length < 30) return false
+    let boolFun = function (str) {
+      if (str === '无' || !str) {
+        return false
+      } else {
+        return true
+      }
+    }
+    switch (how) {
+      case 'wo': /* 高级软卧/软卧/硬卧 */
+        bool = boolFun(arrData[21]) || boolFun(arrData[23]) || boolFun(arrData[28])
+        break
+      case 'zuo': /* 商务座/特等座/一等座/二等座/软座/硬座 */
+        bool = boolFun(arrData[32]) || boolFun(arrData[25]) || boolFun(arrData[31]) || boolFun(arrData[30]) || boolFun(arrData[22]) || boolFun(arrData[29])
+        break;
+      case 'zhan': /* 无座 */
+        bool = boolFun(arrData[26])
+        break
+    }
+    return bool
   },
   $_convertCity: function (city, bool) {
     let name = station.stationNames.split("@")
