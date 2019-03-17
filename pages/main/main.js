@@ -1,5 +1,8 @@
 const util = require('../../utils/util.js')
 
+let pAutoTimeOut = null
+let pAutoRunning = false
+let pAutoPosIndex = 0
 Page({
   data: {
     no: '',
@@ -11,11 +14,14 @@ Page({
     boolZwdRunning: false
   },
   handlerSelect: function () {
+    clearTimeout(pAutoTimeOut)
+    pAutoRunning = false
     wx.navigateTo({
       url: '../query/query'
     })
   },
   query: function () {
+    /* 从外网查询车次并处理 */
     const myDate = new Date()
     let strDate = util.formatTime(myDate, '', 'date')
     let strNo = this.data.no ? this.data.no.substr(0, 1) : ''
@@ -56,6 +62,7 @@ Page({
     }
   },
   $_queryTrainList: function (data, date) {
+    /* 从外网获取列车时刻表并处理 */
     let strTrainNo = ''
     let strDate = date || util.formatTime(new Date(), '-', 'date')
     this.setData({arrData: [], arrDataPic: []})
@@ -104,6 +111,7 @@ Page({
           arrData: objData.data.data
         })
         this.$_computedRun()
+        this.$_autoZwdUpdate()
         if (!objData.data.data.length) {
           this.setData({arrDataPic: []})
           wx.showModal({
@@ -188,6 +196,7 @@ Page({
     /* } */
   },
   $_getZwd: function (objPost, index, callback) {
+    /* 从外网获取正晚点信息并处理 */
     let arrData = this.data.arrData
     util.$http.get('https://dynamic.12306.cn/mapping/kfxt/zwdcx/LCZWD/cx.jsp', {
       data: objPost,
@@ -235,7 +244,7 @@ Page({
       this.setData({
         arrData: arrData
       })
-      callback && callback()
+      callback && callback(strOut)
     })
   },
   $_dealData: function () {
@@ -255,12 +264,14 @@ Page({
     })
   },
   $_computedRun: function () {
+    /* 处理火车位置 */
     let arrData = this.data.arrData
     let intTime = parseInt(util.formatTime(new Date(), '', 'time'))
     let arrResult = []
     for (let i = 0; i < arrData.length; i++) {
       let arrTmp = Object.assign({}, arrData[i])
       let intArrive = 0
+      let planArrive = 0
       let planSelfArrive = parseInt(arrData[i].arrive_time.replace(':',''))
       let planStart = parseInt(arrData[i].start_time.replace(':',''))
       let selfArrive = parseInt(arrData[i].arrive_time_deal.replace(':',''))
@@ -268,24 +279,77 @@ Page({
       if (i===arrData.length-1) {
         intArrive = selfArrive
         intStart = selfArrive
+        planArrive = planSelfArrive
       } else {
         intArrive = parseInt(arrData[i+1].arrive_time_deal.replace(':',''))
+        planArrive = parseInt(arrData[i+1].arrive_time.replace(':',''))
       }
       /* console.log(selfArrive, intStart, intArrive, intTime) */
-      if (intTime > intStart && intTime < intArrive) {
-        arrTmp.run = 1
-      } else if (selfArrive <= intTime && intTime <= intStart) {
-        arrTmp.run = 0
-      } else if ((intTime > intStart && intTime > intArrive || intTime < intStart && intTime < intArrive) && intStart > intArrive && i !== 0 && i !== arrData.length - 1) {
-        arrTmp.run = 1
-      } else if (selfArrive <= intTime && intTime >= intStart && selfArrive > intStart && i !== 0 && i !== arrData.length - 1) {
-        arrTmp.run = 0
-      } else {
-        arrTmp.run = -1
-      }
-
-      if (!(planSelfArrive <= planStart && selfArrive <= intStart || planSelfArrive > planStart && selfArrive > intStart || intTime >= selfArrive)) {
-        arrTmp.run = -1
+      /* intTime:当前时间
+       *
+       * intArrive:下一个站到达时间
+       * intStart:本站出发时间
+       * selfArrive:本站到达时间
+       * 
+       * planArrive:计划下一个站到达时间
+       * planStart:计划本站出发时间
+       * planSelfArrive:计划本站到达时间
+       */
+      /* console.log(arrData[i]); */
+      arrTmp.run = -1;
+      if (planSelfArrive > planStart && selfArrive > intStart) {
+        /* console.log('planSelfArrive > planStart && selfArrive > planStart', planSelfArrive, planStart, selfArrive, planArrive, intStart) */
+        if (intTime >= selfArrive || intStart >= intTime) {
+          arrTmp.run = 0
+        } else if (planArrive > planStart) {
+          if (intArrive > intTime && intTime > intStart) {
+            arrTmp.run = 1
+          }
+        } else if (planArrive < planStart) {
+          if (intArrive < intTime && intTime < intStart) {
+            arrTmp.run = 1
+          }
+        }
+      } else if (planSelfArrive < planStart && selfArrive <= intStart) {
+        /* console.log('planSelfArrive < planStart && selfArrive < planStart', planSelfArrive, planStart, selfArrive, planArrive, intStart) */
+        if (selfArrive <= intTime && intTime <= intStart) {
+          arrTmp.run = 0
+        } else if (planArrive > planStart) {
+          if (intArrive > intTime && intTime > intStart) {
+            arrTmp.run = 1
+          }
+        } else if (planArrive < planStart) {
+          if (intArrive < intStart && (intTime > intStart || intTime < intArrive)) {
+            arrTmp.run = 1
+          }
+        }
+      } else if (i === 0) {
+        var intBefore30 = intStart - 30;
+        intBefore30 = intBefore30 < 0 ? (intBefore30 + 2399) : intBefore30
+        if (intBefore30 <= intTime && intTime < intStart) {
+          arrTmp.run = 0
+        }
+        if (
+          (planArrive > planStart && (intTime >= intStart && intTime < intArrive)) 
+          || 
+          (planArrive < planStart && (intTime >= intStart || intTime < intArrive))
+        ) {
+          if (intTime === intStart) {
+            arrTmp.run = 0
+          } else {
+            arrTmp.run = 1
+          }
+        }
+      } else if (i === arrData.length - 1 && intTime === selfArrive) {
+        let planBeforeStart = parseInt(arrData[i-1].start_time.replace(':',''))
+        let selfBeforeArrive = parseInt(arrData[i-1].arrive_time_deal.replace(':',''))
+        if (
+          planBeforeStart < planSelfArrive && selfBeforeArrive < selfArrive
+          ||
+          planBeforeStart > planSelfArrive && selfBeforeArrive > selfArrive
+        ) {
+          if (intTime === selfArrive) arrTmp.run = 0
+        }
       }
 
       arrResult.push(arrTmp)
@@ -294,6 +358,116 @@ Page({
       arrData: arrResult
     })
     this.$_dealData()
+  },
+  $_autoZwdUpdate: function(){
+    /* 更新火车位置智能化 */
+    let _this = this
+    let arrData = this.data.arrData
+    let intTime = parseInt(util.formatTime(new Date(), '', 'time'))
+    let intTimeToInt = function(data){
+      return parseInt(data.replace(':',''))
+    }
+    let objPost = function(city){
+      return {
+        cxlx: 0,
+        cz: city,
+        cc: _this.data.no,
+        rq: util.formatTime(new Date(), '-', 'date'),
+        czEn: encodeURI(city.replace(/\s+/g,"")).replace(/%/g,"-")
+      }
+    }
+    let arrMatchData = []
+    if (getCurrentPages().reverse()[0].route !== 'pages/main/main' || arrData.length <= 0) {
+      console.log('不是当前主页面或数据不存在，查询暂停。')
+      clearTimeout(pAutoTimeOut)
+      return false
+    }
+    pAutoRunning = true
+    for (let i = 0; i < arrData.length; i++) {
+      /* let intArriveTime = intTimeToInt(arrData[i].arrive_time_deal)
+      let intStartTime = intTimeToInt(arrData[i].start_time_deal)
+      let intTimeB1 = (intTime - 100) < 0 ? (intTime - 100 + 2359) : (intTime - 100)
+      let intTimeA3 = (intTime + 200) > 2359 ? (intTime + 200 - 2359) : (intTime + 200)
+      if (
+        intTimeA3 > intArriveTime && intArriveTime > intTimeB1
+        ||
+        intTimeA3 > intStartTime && intStartTime > intTimeB1
+      ) {
+        arrMatchData.push(Object.assign(arrData[i], {
+          index: i
+        }))
+      } */
+      if (arrData[i].run >= 0) {
+        arrMatchData.push(Object.assign(arrData[i], {
+          index: i
+        }))
+      } else if (i > 0) {
+        if (arrData[i - 1].run >= 0) {
+          arrMatchData.push(Object.assign(arrData[i], {
+            index: i
+          }))
+        }
+      }
+    }
+    console.log(arrMatchData);
+    let updateLoop = function(index){
+      if (!pAutoRunning) return false
+      if (index < arrMatchData.length) {
+        let objPostData = objPost(arrMatchData[index].station_name)
+        if (arrMatchData[index].index === 0) {
+          let objPost1 = Object.assign({}, objPostData, {
+            cxlx: 1
+          })
+          _this.$_getZwd(objPost1, arrMatchData[index].index, () => {
+            _this.$_computedRun()
+            setTimeout(() => {
+              updateLoop(index + 1)
+            }, parseInt(Math.random() * 1000) + 500)
+          })
+        } else if (arrMatchData[index].index === arrData.length - 1) {
+          let objPost1 = Object.assign({}, objPostData, {
+            cxlx: 0
+          })
+          _this.$_getZwd(objPost1, arrMatchData[index].index, () => {
+            _this.$_computedRun()
+            setTimeout(() => {
+              updateLoop(index + 1)
+            }, parseInt(Math.random() * 1000) + 500)
+          })
+        } else {
+          _this.$_getZwd(objPostData, arrMatchData[index].index, (strZwd1) => {
+            _this.$_computedRun()
+            setTimeout(() => {
+              let objPost1 = Object.assign({}, objPostData, {
+                cxlx: objPostData.cxlx === 0 ? 1 : 0
+              })
+              _this.$_getZwd(objPost1, arrMatchData[index].index, (strZwd2) => {
+                _this.$_computedRun()
+                if (intTimeToInt(strZwd1) > intTime && (index % 2 === 0)) {
+                  console.log('火车时间未到，10秒后重新查。')
+                  pAutoPosIndex = index
+                  pAutoRunning = false
+                  pAutoTimeOut = setTimeout(function(){
+                    _this.$_autoZwdUpdate()
+                  }, 1 * 10 * 1000)
+                } else {
+                  setTimeout(() => {
+                    updateLoop(index + 1)
+                  }, parseInt(Math.random() * 1000) + 500)
+                }
+              })
+            }, parseInt(Math.random() * 1000) + 500)
+          })
+        }
+      } else if (arrMatchData.length > 0) {
+        pAutoPosIndex = 0
+        pAutoRunning = false
+        pAutoTimeOut = setTimeout(function(){
+          _this.$_autoZwdUpdate()
+        }, 1 * 60 * 1000)
+      }
+    }
+    updateLoop(pAutoPosIndex)
   },
   handlerInput: function (e) {
     let objTmp = {}
@@ -308,6 +482,9 @@ Page({
       value: value,
       cursor: pos
     }
+  },
+  onShow: function() {
+    this.$_autoZwdUpdate()
   },
   onLoad: function (options) {
     /* console.log(options)

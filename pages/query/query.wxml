@@ -32,7 +32,7 @@
           <text class="finish show" wx:if="{{obj.canWebBuy==='N'}}" catchtap="handlerSellTip" data-index="{{index}}">罄</text>
           <text class="score {{obj.exchange?'show':''}}" wx:if="{{obj.canWebBuy==='Y' || obj.exchange}}" catchtap="handlerScoreTip" data-index="{{index}}">兑</text>
           <text>{{obj.no}}</text>
-          <view class="btm-txt">
+          <view class="btm-txt" style="padding: 0 0 0 50rpx;">
             <text class="tag text" wx:if="{{obj.isWo || obj.isZuo || obj.isZhan}}">(</text>
             <text class="tag wo" wx:if="{{obj.isWo}}">卧</text>
             <text class="tag text" wx:if="{{obj.isWo && obj.isZuo}}">/</text>
@@ -44,7 +44,7 @@
         </view>
         <view class="value">
           <text>{{obj.start_end}}</text>
-          <view class="btm-txt">
+          <view class="btm-txt text-center">
             <text class="city">({{obj.first_last}})</text>
           </view>
         </view>

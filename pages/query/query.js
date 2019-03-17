@@ -272,9 +272,11 @@ Page({
       key: 'date',
       success: function(res) {
         console.log('date', res)
-        that.setData({
-          date: res.data
-        })
+        if (new Date(that.data.mindate).getTime() <= new Date(res.data).getTime()) {
+          that.setData({
+            date: res.data
+          })
+        }
       } 
     })
     wx.getStorage({
