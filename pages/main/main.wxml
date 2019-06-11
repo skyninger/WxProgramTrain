@@ -27,15 +27,15 @@
         <view class="time" wx:if="{{index===arrDataPic.length-1 && idx===data.length-1}}">
           <text class="{{item.arrive_time_zwd_sign===1?'red':''}}{{item.arrive_time_zwd_sign===0?'green':''}}">{{item.arrive_time_deal}}到</text>
         </view>
-        <view class="time" wx:if="{{index===0 && idx===0 && item.start_time_zwd && item.start_time_zwd_sign !== -1}}">
+        <view class="time" wx:if="{{index===0 && idx===0 && item.start_time_zwd && item.start_time !== item.start_time_deal}}">
           <text>计{{item.start_time}}</text>
         </view>
         <view class="time" wx:if="{{!(index===0 && idx===0) && !(index===arrDataPic.length-1 && idx===data.length-1) && (item.arrive_time_zwd || item.start_time_zwd)}}">
-          <text class="{{item.arrive_time_zwd_sign === -1 ? 'opacity0' : ''}}">{{item.arrive_time}}</text>
+          <text class="{{item.arrive_time_deal === item.arrive_time ? 'opacity0' : ''}}">{{item.arrive_time}}</text>
           <text class="sign opacity0">-</text>
-          <text class="{{item.start_time_zwd_sign === -1 ? 'opacity0' : ''}}">{{item.start_time}}</text>
+          <text class="{{item.start_time_deal === item.start_time ? 'opacity0' : ''}}">{{item.start_time}}</text>
         </view>
-        <view class="time" wx:if="{{index===arrDataPic.length-1 && idx===data.length-1 && item.arrive_time_zwd && item.arrive_time_zwd_sign !== -1}}">
+        <view class="time" wx:if="{{index===arrDataPic.length-1 && idx===data.length-1 && item.arrive_time_zwd && item.arrive_time !== item.arrive_time_deal}}">
           <text>计{{item.arrive_time}}</text>
         </view>
         <view class="pos-end" wx:if="{{index===arrDataPic.length-1 && idx===data.length-1}}">

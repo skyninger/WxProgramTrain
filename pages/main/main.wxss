@@ -87,12 +87,12 @@
   direction: rtl;
 }
 .gui-box .row-box:first-child{
-  border-top: 6rpx solid #1b84e6;
+  border-top: 7rpx solid #1b84e6;
 }
 .gui-box .row-box::before{
   content: '';
   position: absolute;
-  top: -6rpx;
+  top: -5rpx;
   right: -100rpx;
   width: 100%;
   height: 206rpx;

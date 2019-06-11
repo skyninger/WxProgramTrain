@@ -206,7 +206,7 @@ Page({
       const strData = response.data
       let arrValue = strData.match(/(\d{2}:\d{2})/g)
       let strOut = '未定'
-      let intType = -1
+      let intType = -11
       if(arrValue) {
         strOut = arrValue[0];
         /* if (/预计/g.test(strData)){
@@ -227,16 +227,16 @@ Page({
       if (parseInt(objPost.cxlx) === 0) {
         arrData[parseInt(index)].arrive_time_zwd_sign = intType
         arrData[parseInt(index)].arrive_time_zwd = strOut
-        if (intType === -1) {
-          arrData[parseInt(index)].arrive_time_deal = arrData[parseInt(index)].arrive_time
+        if (intType === -11) {
+          // arrData[parseInt(index)].arrive_time_deal = arrData[parseInt(index)].arrive_time
         } else {
           arrData[parseInt(index)].arrive_time_deal = strOut
         }
       } else if (parseInt(objPost.cxlx) === 1) {
         arrData[parseInt(index)].start_time_zwd_sign = intType
         arrData[parseInt(index)].start_time_zwd = strOut
-        if (intType === -1) {
-          arrData[parseInt(index)].start_time_deal = arrData[parseInt(index)].start_time
+        if (intType === -11) {
+          // arrData[parseInt(index)].start_time_deal = arrData[parseInt(index)].start_time
         } else {
           arrData[parseInt(index)].start_time_deal = strOut
         }
@@ -444,12 +444,12 @@ Page({
               _this.$_getZwd(objPost1, arrMatchData[index].index, (strZwd2) => {
                 _this.$_computedRun()
                 if (intTimeToInt(strZwd1) > intTime && (index % 2 === 0)) {
-                  console.log('火车时间未到，10秒后重新查。')
+                  console.log('火车时间未到，5秒后重新查。')
                   pAutoPosIndex = index
                   pAutoRunning = false
                   pAutoTimeOut = setTimeout(function(){
                     _this.$_autoZwdUpdate()
-                  }, 1 * 10 * 1000)
+                  }, 1 * 5 * 1000)
                 } else {
                   setTimeout(() => {
                     updateLoop(index + 1)
