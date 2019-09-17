@@ -205,6 +205,12 @@ Page({
     util.$http.get('https://kyfw.12306.cn/otn/leftTicket/init').then(response => {
       const strHtml = response.data
       const REG_TAG = /<script[^>]*>([\s\S]*?)<\/script>/
+      if (response.header['Set-Cookie']) {
+        wx.setStorage({
+          key: 'cookie',
+          data: response.header['Set-Cookie']
+        })
+      }
       if (REG_TAG.exec(strHtml).length > 1) {
         const arrSource = REG_TAG.exec(strHtml)[1].split('\n')
         const arrDeal = arrSource.filter(v => v.indexOf('CLeftTicketUrl') > -1)

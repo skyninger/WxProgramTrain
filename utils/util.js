@@ -21,10 +21,19 @@ const formatNumber = n => {
 }
 
 const $http = (URL, options = {}) => {
+  let strCookie = ''
+  try {
+    strCookie = wx.getStorageSync('cookie')
+  } catch (e) {
+    console.log('getCookie', e)
+  }
   return new Promise((resolve, reject) => {
     wx.showNavigationBarLoading()
     wx.request(Object.assign({
       url: URL,
+      header: {
+        cookie: strCookie
+      },
       success: data => {
         resolve(data)
       },
@@ -39,11 +48,20 @@ const $http = (URL, options = {}) => {
 }
 
 $http.get = (URL, options = {}) => {
+  let strCookie = ''
+  try {
+    strCookie = wx.getStorageSync('cookie')
+  } catch (e) {
+    console.log('getCookie', e)
+  }
   return new Promise((resolve, reject) => {
     wx.showNavigationBarLoading()
     wx.request(Object.assign({
       url: URL,
       method: 'GET',
+      header: {
+        cookie: strCookie
+      },
       success: data => {
         resolve(data)
       },
@@ -58,11 +76,20 @@ $http.get = (URL, options = {}) => {
 }
 
 $http.post = (URL, options = {}) => {
+  let strCookie = ''
+  try {
+    strCookie = wx.getStorageSync('cookie')
+  } catch (e) {
+    console.log('getCookie', e)
+  }
   return new Promise((resolve, reject) => {
     wx.showNavigationBarLoading()
     wx.request(Object.assign({
       url: URL,
       method: 'POST',
+      header: {
+        cookie: strCookie
+      },
       success: data => {
         resolve(data)
       },
