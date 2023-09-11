@@ -86,7 +86,8 @@ Page({
       * wap:https://mobile.12306.cn/weixin/czxx/queryByTrainNo
       * pc:https://kyfw.12306.cn/otn/czxx/queryByTrainNo
       */
-      util.$http.get('https://mobile.12306.cn/weixin/czxx/queryByTrainNo', {
+      // util.$http.get('https://mobile.12306.cn/weixin/czxx/queryByTrainNo', {
+      util.$http.get('https://kyfw.12306.cn/otn/czxx/queryByTrainNo', {
         data: {
           train_no: strTrainNo,
           from_station_telecode: 'BBB',
@@ -111,7 +112,7 @@ Page({
           arrData: objData.data.data
         })
         this.$_computedRun()
-        this.$_autoZwdUpdate()
+        // this.$_autoZwdUpdate()
         if (!objData.data.data.length) {
           this.setData({arrDataPic: []})
           wx.showModal({
@@ -198,22 +199,23 @@ Page({
   $_getZwd: function (objPost, index, callback) {
     /* 从外网获取正晚点信息并处理 */
     let arrData = this.data.arrData
-    util.$http.get('https://dynamic.12306.cn/mapping/kfxt/zwdcx/LCZWD/cx.jsp', {
+    util.$http.get('https://kyfw.12306.cn/otn/zwdch/query', {
       data: objPost,
       header: {'Content-Type':'application/json; charset=utf-8'}
     }).then(response => {
       console.log(response)
-      const strData = response.data
+      const objValue = response.data.data || {};
+      const strData = objValue.message || '';
       let arrValue = strData.match(/(\d{2}:\d{2})/g)
       let strOut = '未定'
       let intType = -11
       if(arrValue) {
         strOut = arrValue[0];
-        /* if (/预计/g.test(strData)){
-          intType=0;
-        } else {
-          intType=1;
-        } */
+        // if (/预计/g.test(strData)){
+        //   intType=0;
+        // } else {
+        //   intType=1;
+        // }
         let intTime = parseInt(util.formatTime(new Date(), '', 'time'))
         if (strOut.indexOf(':') > -1) {
           let selfTime = parseInt(strOut.replace(':',''))
@@ -246,6 +248,54 @@ Page({
       })
       callback && callback(strOut)
     })
+    /* util.$http.get('https://dynamic.12306.cn/mapping/kfxt/zwdcx/LCZWD/cx.jsp', {
+      data: objPost,
+      header: {'Content-Type':'application/json; charset=utf-8'}
+    }).then(response => {
+      console.log(response)
+      const strData = response.data
+      let arrValue = strData.match(/(\d{2}:\d{2})/g)
+      let strOut = '未定'
+      let intType = -11
+      if(arrValue) {
+        strOut = arrValue[0];
+        // if (/预计/g.test(strData)){
+        //   intType=0;
+        // } else {
+        //   intType=1;
+        // }
+        let intTime = parseInt(util.formatTime(new Date(), '', 'time'))
+        if (strOut.indexOf(':') > -1) {
+          let selfTime = parseInt(strOut.replace(':',''))
+          if (intTime < selfTime) {
+            intType = 0
+          } else {
+            intType = 1
+          }
+        }
+      }
+      if (parseInt(objPost.cxlx) === 0) {
+        arrData[parseInt(index)].arrive_time_zwd_sign = intType
+        arrData[parseInt(index)].arrive_time_zwd = strOut
+        if (intType === -11) {
+          // arrData[parseInt(index)].arrive_time_deal = arrData[parseInt(index)].arrive_time
+        } else {
+          arrData[parseInt(index)].arrive_time_deal = strOut
+        }
+      } else if (parseInt(objPost.cxlx) === 1) {
+        arrData[parseInt(index)].start_time_zwd_sign = intType
+        arrData[parseInt(index)].start_time_zwd = strOut
+        if (intType === -11) {
+          // arrData[parseInt(index)].start_time_deal = arrData[parseInt(index)].start_time
+        } else {
+          arrData[parseInt(index)].start_time_deal = strOut
+        }
+      }
+      this.setData({
+        arrData: arrData
+      })
+      callback && callback(strOut)
+    }) */
   },
   $_dealData: function () {
     let arrData = this.data.arrData
