@@ -238,3 +238,20 @@
   right: auto;
   left: 0;
 }
+
+.charge-wrap{
+  height: 100rpx;
+}
+.charge-wrap__icon{
+  position: fixed;
+  right: 50rpx;
+  bottom: 100rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 100rpx;
+  text-align: center;
+  line-height: 100rpx;
+  background-color: #00aa00;
+  color: #ffffff;
+  font-size: 24rpx;
+}

@@ -103,7 +103,47 @@ $http.post = (URL, options = {}) => {
   })
 }
 
+
+/**
+ * 统一默认弹窗
+ */
+const dialog = {
+  confirm: (options = {}) => {
+    return new Promise((resolve, reject) => {
+      wx.showModal(Object.assign({}, options, {
+        showCancel: true,
+        success: (res) => {
+          console.log(`res.confirm`, res.confirm, res)
+          if (res.confirm) {
+            resolve()
+          } else {
+            reject()
+          }
+        },
+        fail: (err) => {
+          console.log('err', err)
+          reject(err)
+        }
+      }))
+    })
+  },
+  alert: (options = {}) => {
+    return new Promise((resolve, reject) => {
+      wx.showModal(Object.assign({}, options, {
+        showCancel: false,
+        success: (res) => {
+          resolve()
+        },
+        fail: (err) => {
+          reject(err)
+        }
+      }))
+    })
+  }
+}
+
 module.exports = {
   formatTime: formatTime,
-  $http: $http
+  $http: $http,
+  dialog: dialog
 }

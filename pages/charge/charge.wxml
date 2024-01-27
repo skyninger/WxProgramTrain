@@ -1,0 +1,7 @@
+<!--pages/charge/charge.wxml-->
+<view class="button-list">
+  <button class="button" bindtap="handleTap" data-name="SDCD60089200-4CA872" data-id="28:FB:A0:4C:A8:72">SDCD60089200-4CA872</button>
+  <button class="button" bindtap="handleTap" data-name="SDCD60089193-E2CC9F" data-id="64:F8:13:E2:CC:9F">SDCD60089193-E2CC9F</button>
+  <button class="button" bindtap="handleTap" data-name="SDC2210020001-11518A" data-id="FF:22:06:11:51:8A">SDC2210020001-11518A</button>
+  <button class="button" bindtap="handleTap" data-name="SDC2210020002-1141B3" data-id="FF:22:06:11:41:B3">SDC2210020002-1141B3</button>
+</view>

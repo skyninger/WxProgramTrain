@@ -6,7 +6,7 @@
   },
   "setting": {
     "urlCheck": true,
-    "es6": false,
+    "es6": true,
     "postcss": true,
     "minified": true,
     "newFeature": true,
@@ -20,7 +20,8 @@
     },
     "useMultiFrameRuntime": true,
     "useApiHook": true,
-    "useApiHostProcess": true
+    "useApiHostProcess": true,
+    "enhance": true
   },
   "compileType": "miniprogram",
   "libVersion": "2.6.0",

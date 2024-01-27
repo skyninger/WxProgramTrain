@@ -1,7 +1,8 @@
 {
   "pages": [
     "pages/main/main",
-    "pages/query/query"
+    "pages/query/query",
+    "pages/charge/charge"
   ],
   "window": {
     "backgroundTextStyle": "light",

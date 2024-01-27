@@ -13,6 +13,11 @@ Page({
     strTrainListDate: util.formatTime(new Date(), '-', 'date'),
     boolZwdRunning: false
   },
+  goCharge: function () {
+    wx.navigateTo({
+      url: '../charge/charge'
+    })
+  },
   handlerSelect: function () {
     clearTimeout(pAutoTimeOut)
     pAutoRunning = false

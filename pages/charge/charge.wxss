@@ -1,0 +1,14 @@
+/* pages/charge/charge.wxss */
+.button-list{
+  margin: 50rpx;
+}
+.button{
+  margin: 50rpx 0;
+  height: 100rpx;
+  border-radius: 10rpx;
+  display: block;
+  text-align: center;
+  line-height: 100rpx;
+  background-color: #00aa00;
+  color: #fff;
+}

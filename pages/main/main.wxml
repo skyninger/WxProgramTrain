@@ -52,4 +52,8 @@
       </view>
     </view>
   </view>
+
+  <view class="charge-wrap">
+    <view class="charge-wrap__icon" bindtap="goCharge">充电</view>
+  </view>
 </view>
